@@ -4,7 +4,7 @@ const queryString = require('query-string');
 const parseUrl = require('url-parse');
 const { getCurrency } = require('./utils.js');
 
-function extractDetails($) {
+function extractDetails($, request) {
     const h1 = $('h1');
     const reviews = $('#acrCustomerReviewText');
     const questions = $('#askATFLink span');
@@ -19,6 +19,8 @@ function extractDetails($) {
         answeredQuestions: questions.length && questions.text().split(' ')[0],
         avgRating: avgRating.length && avgRating.text().split(' ')[0],
         bsr: bsr && bsr[1],
+        url: request.url,
+        asin: request.userData.asin
     };
 }
 
