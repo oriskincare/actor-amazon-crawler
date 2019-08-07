@@ -4,9 +4,8 @@ const queryString = require('query-string');
 const parseUrl = require('url-parse');
 const { getCurrency } = require('./utils.js');
 
-function extractInfo($) {
+function extractDetails($) {
     const h1 = $('h1');
-    const images = $('div#olpProductImage img');
     const reviews = $('#acrCustomerReviewText');
     const questions = $('#askATFLink span');
     const avgRating = $('#averageCustomerReviews i span');
@@ -23,6 +22,7 @@ function extractInfo($) {
         bsr: bsr && bsr[1],
     };
 }
+
 function buildSellerUrl(url) {
     const parsedUrl = queryString.parseUrl(url);
     return `${parsedUrl.url}/?seller=${parsedUrl.query.seller}`;
@@ -91,7 +91,7 @@ function extractSellers($, request) {
 
 // to in a way to make sense what they are doing, so this one should be
 // called parseSellerDetails
-async function parseSellerDetail($, request) {
+async function extractDetails($, request) {
     const sellers = await extractSellers($, request);
     const item = await extractInfo($);
     const currency = await getCurrency(request);
@@ -114,4 +114,4 @@ async function parseSellerDetail($, request) {
     return item;
 }
 
-module.exports = parseSellerDetail;
+module.exports = extractDetails;

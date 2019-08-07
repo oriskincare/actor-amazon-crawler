@@ -1,7 +1,7 @@
 /* global $, window */
 const Apify = require('apify');
 const createSearchUrls = require('./createSearchUrls');
-const parseSellerDetail = require('./parseSellerDetail');
+const extractDetails = require('./extractDetails');
 const parseItemUrls = require('./parseItemUrls');
 const parsePaginationUrl = require('./parsePaginationUrl');
 const { saveItem, getOriginUrl } = require('./utils');
@@ -63,6 +63,7 @@ Apify.main(async () => {
                 try {
                     const items = await parseItemUrls($, request);
                     for (const item of items) {
+                        /*
                         await requestQueue.addRequest({
                             url: item.url,
                             userData: {
@@ -73,6 +74,17 @@ Apify.main(async () => {
                                 sellerUrl: item.sellerUrl,
                             },
                         }, { forefront: true });
+                        */
+                        await requestQueue.addRequest({
+                            url: item.detailUrl,
+                            userData: {
+                                label: 'detail',
+                                keyword: request.userData.keyword,
+                                asin: item.asin,
+                                detailUrl: item.detailUrl,
+                                sellerUrl: item.sellerUrl,
+                            }
+                        });
                     }
                 } catch (error) {
                     await Apify.pushData({
@@ -82,35 +94,10 @@ Apify.main(async () => {
                     });
                 }
                 // extract info about item and about seller offers
-            } else if (request.userData.label === 'seller') {
+            } else if (request.userData.label === 'detail') {
                 try {
-                    const item = await parseSellerDetail($, request);
-                    if (item) {
-                        let paginationUrlSeller;
-                        const paginationEle = $('ul.a-pagination li.a-last a');
-                        if (paginationEle.length !== 0) {
-                            paginationUrlSeller = urlOrigin + paginationEle.attr('href');
-                        } else {
-                            paginationUrlSeller = false;
-                        }
-
-                        // if there is a pagination, go to another page
-                        if (paginationUrlSeller !== false) {
-                            console.log(`Seller detail has pagination, crawling that now -> ${paginationUrlSeller}`);
-                            await requestQueue.addRequest({
-                                url: paginationUrlSeller,
-                                userData: {
-                                    label: 'seller',
-                                    keyword: request.userData.keyword,
-                                    sellers: item.sellers,
-                                },
-                            }, { forefront: true });
-                        } else {
-                            console.log(`Saving item url: ${request.url}`);
-                            await saveItem('RESULT', request, item, input, env.defaultDatasetId);
-                            // await Apify.pushData(item);
-                        }
-                    }
+                    const item = await extractDetails($, request);
+                    await saveItem('RESULT', request, item, input, env.defaultDatasetId);
                 } catch (error) {
                     console.error(error);
                     await saveItem('NORESULT', request, null, input, env.defaultDatasetId);
