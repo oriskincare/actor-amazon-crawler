@@ -7,9 +7,20 @@ const { getCurrency } = require('./utils.js');
 function extractInfo($) {
     const h1 = $('h1');
     const images = $('div#olpProductImage img');
+    const reviews = $('#acrCustomerReviewText');
+    const questions = $('#askATFLink span');
+    const avgRating = $('#averageCustomerReviews i span');
+    const bsrRe = new RegExp('#(.{0,3}) in', 'ig');
+    const bsrEl = $('#SalesRank');
+    const bsr = bsrEl.length && bsrRe.exec(bsrEl.text());
+
     return {
         title: h1.length !== 0 ? h1.text().trim() : null,
         image: images.length !== 0 ? images.attr('src').replace('_SS160_.', '') : null,
+        reviews: reviews.length && reviews.text().split(' ')[0],
+        answeredQuestions: questions.length && questions.text().split(' ')[0],
+        avgRating: avgRating.length && avgRating.text().split(' ')[0],
+        bsr: bsr && bsr[1],
     };
 }
 function buildSellerUrl(url) {
