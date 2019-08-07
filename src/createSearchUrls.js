@@ -39,7 +39,6 @@ async function createSearchUrls(input) {
                     url: `${searchUrlBase}dp/${item.asin}`,
                     userData: {
                         label: 'detail',
-                        keyword: request.userData.keyword,
                         asin: item.asin,
                         sellerUrl: item.sellerUrl,
                     }

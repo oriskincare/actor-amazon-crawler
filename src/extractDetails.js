@@ -91,7 +91,7 @@ function extractSellers($, request) {
 
 // to in a way to make sense what they are doing, so this one should be
 // called parseSellerDetails
-async function extractDetails($, request) {
+async function parseSellerDetails($, request) {
     const sellers = await extractSellers($, request);
     const item = await extractInfo($);
     const currency = await getCurrency(request);
