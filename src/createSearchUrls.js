@@ -23,6 +23,7 @@ async function createSearchUrls(input) {
             for (const country of item.countries) {
                 searchUrlBase = getBaseUrl(country.toUpperCase());
                 const sellerUrl = `${searchUrlBase}gp/offer-listing/${item.asin}`;
+                /*
                 builtUrls.push({
                     url: sellerUrl,
                     userData: {
@@ -32,6 +33,16 @@ async function createSearchUrls(input) {
                         sellerUrl,
                         country: country.toUpperCase(),
                     },
+                });
+                */
+                await builtUrls.push({
+                    url: `${searchUrlBase}dp/${item.asin}`,
+                    userData: {
+                        label: 'detail',
+                        keyword: request.userData.keyword,
+                        asin: item.asin,
+                        sellerUrl: item.sellerUrl,
+                    }
                 });
             }
         }
