@@ -15,7 +15,6 @@ function extractDetails($) {
 
     return {
         title: h1.length !== 0 ? h1.text().trim() : null,
-        image: images.length !== 0 ? images.attr('src').replace('_SS160_.', '') : null,
         reviews: reviews.length && reviews.text().split(' ')[0],
         answeredQuestions: questions.length && questions.text().split(' ')[0],
         avgRating: avgRating.length && avgRating.text().split(' ')[0],
